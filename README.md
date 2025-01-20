@@ -1,6 +1,8 @@
 
 # C++ Banking System
 
+![C++ Banking System](https://scontent.fdac138-1.fna.fbcdn.net/v/t39.30808-6/474491472_122136891218552158_8494252222310176576_n.jpg?stp=dst-jpg_p526x296_tt6&_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_ohc=YRULWqoqy_EQ7kNvgHcNHqF&_nc_zt=23&_nc_ht=scontent.fdac138-1.fna&_nc_gid=ATqL_SQxTXKtXxGQj15W1hQ&oh=00_AYAJNv4b8twoGZRw35MXE4AQdLJgwxZO1d08-7jyBHVIWw&oe=67946426)
+
 A simple banking system implemented in C++ for managing customer accounts and performing administrative operations. This project simulates basic banking functionalities, including account creation, deposit, withdrawal, balance inquiry, and admin-level controls like viewing all accounts, resetting passwords, and deleting accounts.
 
 ## Features
