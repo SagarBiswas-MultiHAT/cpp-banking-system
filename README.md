@@ -1,7 +1,7 @@
 
 # C++ Banking System
 
-![C++ Banking System](https://imgur.com/undefined.png)
+![C++ Banking System](https://imgur.com/BF4sbAi.png)
 
 A simple banking system implemented in C++ for managing customer accounts and performing administrative operations. This project simulates basic banking functionalities, including account creation, deposit, withdrawal, balance inquiry, and admin-level controls like viewing all accounts, resetting passwords, and deleting accounts.
 
