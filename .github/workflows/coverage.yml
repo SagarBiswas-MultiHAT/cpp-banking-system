@@ -1,0 +1,23 @@
+name: Coverage
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    coverage:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Install dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y cmake ninja-build libssl-dev gcovr
+            - name: Configure
+              run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+            - name: Build
+              run: cmake --build build
+            - name: Test
+              run: ctest --test-dir build --output-on-failure
+            - name: Report
+              run: gcovr -r . --print-summary

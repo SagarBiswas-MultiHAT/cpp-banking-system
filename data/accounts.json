@@ -1,0 +1,15 @@
+[
+  {
+    "balance": 777.0,
+    "created_at": 1769891905,
+    "email": "sagarbiswas@gmail.com",
+    "father_name": "Shyamal Biswas",
+    "id": "64cad0ba-e9d7-aed1-b5fc-dc4ac0bffcf2",
+    "name": "Sagar Biswas",
+    "national_id": "12345780",
+    "password_hash": "eb89f7b86c82d6f67384cabb5f8509c642fb9dd93d3754bff6ec0fa235847ad6",
+    "phone": "098754321",
+    "salt": "228650a7ef46664b45aa0844832f1065",
+    "updated_at": 1769891905
+  }
+]

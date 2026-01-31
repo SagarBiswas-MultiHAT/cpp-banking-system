@@ -1,57 +1,242 @@
+# C++ Banking System (Secure, Tested)
 
-# C++ Banking System
+Modern CLI banking simulator with secure credential handling, JSON-based storage, and automated tests/CI. It demonstrates production-grade practices (sanitizers, linting, atomic writes, and audited transactions) in a compact codebase.
 
-![C++ Banking System](https://imgur.com/BF4sbAi.png)
+## What this project is (and isn’t)
 
-A simple banking system implemented in C++ for managing customer accounts and performing administrative operations. This project simulates basic banking functionalities, including account creation, deposit, withdrawal, balance inquiry, and admin-level controls like viewing all accounts, resetting passwords, and deleting accounts.
+**This is a learning-focused banking simulator** built for clear architecture and safe defaults. It is **not** a real banking system and omits networked APIs, regulatory compliance, and cryptographic key management. If you need a production banking platform, this repository is a starting point for architecture and process—not a complete solution.
 
 ## Features
 
-### User Functions
-- **Create Account**: Create a new bank account with user details.
-- **Login**: Secure login to user accounts using account number and password.
-- **Deposit Amount**: Add funds to the account.
-- **Withdraw Amount**: Withdraw funds from the account.
-- **Check Info**: View account details and current balance.
-- **Update Account Info**: Modify contact details such as phone number and email.
+- Secure account creation with salted SHA-256 hashes and UUID account IDs.
+- Login + deposit/withdraw with balance protection (no overdrafts).
+- Contact updates and account introspection.
+- Admin panel: list accounts, reset passwords, delete accounts.
+- Transaction log for every balance-impacting action (JSONL).
+- Atomic persistence to reduce corruption risk.
 
-### Admin Functions
-- **View All Accounts**: List all bank accounts and their details.
-- **Reset Password**: Reset the password for any account.
-- **Generate Report**: Generate a comprehensive report of all accounts.
-- **Delete Account**: Remove an account from the system.
-- **Admin Login**: Secure login for administrators with default credentials.
+## Quickstart
 
-##### Enter admin username :: #admin#
-##### Enter admin password :: #admin#
+### Windows (PowerShell + MSYS2 g++)
 
-## Getting Started
+1. Install CMake (and optionally Ninja):
 
-### Prerequisites
-- C++ compiler (e.g., g++)
-- Standard C++ Libraries
-
-### How to Compile
-```bash
-g++ banking_system.cpp -o banking_system
+```powershell
+winget install -e --id Kitware.CMake
+winget install -e --id Ninja-build.Ninja
 ```
 
-### How to Run
-```bash
-./banking_system
+Close and reopen PowerShell after install.
+
+2. Build and run:
+
+```powershell
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+./build/banking_app.exe
 ```
 
-## Usage
-1. Follow the prompts to either login, create an account, or access the admin panel.
-2. Admin credentials are predefined as `#admin#` for both username and password.
+### Linux/macOS
 
-## File Structure
-- `data.txt`: Stores account information.
-- `transactions.txt`: Logs deposit and withdrawal transactions.
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+./build/banking_app
+```
+
+## Example CLI walkthrough
+
+```
+=== Secure Bank ===
+1) Login to account
+2) Create account
+3) Admin panel
+0) Exit
+
+> 2
+Name: Alice
+Father name: Bob
+National ID: 1234
+Phone: 555-111
+Email: alice@example.com
+Set password: ********
+Initial deposit: 100
+
+Account created. Save your Account ID: 2c6b8e7a-4aa6-4f3d-9d8d-6a1d1d0f2f3a
+```
+
+```
+> 1
+Account ID: 2c6b8e7a-4aa6-4f3d-9d8d-6a1d1d0f2f3a
+Password: ********
+
+--- User Panel ---
+1) Deposit
+2) Withdraw
+3) Check info
+4) Update contact
+0) Back
+```
+
+```
+> 3
+Admin username: admin
+Admin password: ********
+
+--- Admin Panel ---
+1) View all accounts
+2) Reset password
+3) Delete account
+0) Back
+```
+
+## Data & Config
+
+- Accounts: `data/accounts.json`
+- Transactions: `data/transactions.log` (newline-delimited JSON)
+- Admin config: `config/app.json` (created during first-run setup)
+
+### Accounts JSON schema
+
+```json
+{
+    "id": "uuid",
+    "name": "string",
+    "father_name": "string",
+    "national_id": "string",
+    "phone": "string",
+    "email": "string",
+    "password_hash": "hex",
+    "salt": "hex",
+    "balance": 120.0,
+    "created_at": 1738368000,
+    "updated_at": 1738368000
+}
+```
+
+### Transactions JSONL schema
+
+```json
+{
+    "timestamp": 1738368000,
+    "account_id": "uuid",
+    "kind": "Deposit",
+    "amount": 50.0,
+    "note": "User deposit"
+}
+```
+
+## Security model (summary)
+
+- Passwords are never stored in plaintext; salted SHA-256 (Windows: bcrypt/CNG, Linux: OpenSSL).
+- Input validation prevents negative/overflowed amounts and overdrafts.
+- Atomic file writes reduce corruption risk; temp file then rename.
+- Admin credentials are set on first run (no shipped default password).
+
+See [docs/SECURITY.md](docs/SECURITY.md) for details.
+
+## Architecture overview
+
+- `src/` services (account, admin, storage, crypto, util)
+- `include/` public headers
+- `tests/` assertions for core flows
+- `CMakeLists.txt` with warnings-as-errors and optional sanitizers
+
+More detail in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## API reference (service-level)
+
+### `AccountService`
+
+- `create_account(...)`: validates input, hashes password, persists account, logs initial deposit.
+- `authenticate(id, password)`: verifies password hash and returns account if valid.
+- `deposit(id, amount)`: validates amount and updates balance.
+- `withdraw(id, amount)`: validates amount and prevents overdraft.
+- `update_contact(id, phone, email)`: updates contact fields and logs an audit entry.
+
+Defined in [include/account_service.h](include/account_service.h).
+
+### `AdminService`
+
+- `authenticate(username, password)`: validates admin credentials.
+- `list_accounts()`: returns all accounts.
+- `reset_password(id, new_password)`: replaces salt + hash and logs action.
+- `delete_account(id)`: deletes account and logs action.
+
+Defined in [include/admin_service.h](include/admin_service.h).
+
+### `Storage`
+
+- `load_accounts() / save_accounts()`: JSON persistence with atomic writes.
+- `append_transaction(tx)`: JSONL append for audit trail.
+- `load_config()`: loads admin credentials.
+
+Defined in [include/storage.h](include/storage.h).
+
+## Tests
+
+### Windows (PowerShell + MSYS2 g++)
+
+```powershell
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build --target banking_tests
+ctest --test-dir build --output-on-failure
+```
+
+### Linux/macOS (or any toolchain that provides `libasan`/`libubsan`)
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DENABLE_SANITIZERS=ON
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
+
+Sanitizers are disabled automatically on Windows because the shipped MinGW toolchain on MSYS2 does not include the required runtime libraries. Use the Linux/macOS command when the toolchain can satisfy those dependencies.
+
+More detail in [docs/TESTING.md](docs/TESTING.md).
+
+## Docker
+
+Build and run using Docker:
+
+```bash
+docker build -t cpp-banking-system .
+docker run --rm -it cpp-banking-system
+```
+
+## Developer setup helpers
+
+- Windows: `scripts/setup_dev.ps1`
+- Linux/macOS: `scripts/setup_dev.sh`
+
+## Performance notes
+
+This project is optimized for small-scale CLI usage. See [docs/PERFORMANCE.md](docs/PERFORMANCE.md) for profiling tips and scalability considerations.
+
+## Troubleshooting
+
+- **CMake can’t find OpenSSL (Linux/macOS)**: install `libssl-dev` or the platform equivalent.
+- **Sanitizers fail on Windows**: use Linux/macOS or a toolchain that ships the runtime libraries.
+- **JSON parsing errors**: delete the corrupted `data/accounts.json` and retry (this resets accounts).
+
+## FAQ
+
+**Why JSON files instead of a database?**
+This project is intentionally simple and portable; JSON keeps storage transparent.
+
+**Is this safe for production?**
+No. It is a secure simulator for learning and testing patterns.
 
 ## Contributing
-Feel free to fork this repository and submit pull requests to improve the system or add new features.
 
+Issues and PRs are welcome. Please include tests for new logic and run `ctest` before submission.
 
-## Author
-[SagarBiswas-MultiHAT](https://github.com/SagarBiswas-MultiHAT)
+If you plan to contribute regularly, see CONTRIBUTING.md.
+
+After Modifications, run a clean build and tests:
+
+```
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
