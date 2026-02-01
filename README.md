@@ -81,7 +81,7 @@ Password: ********
 ```
 > 3
 Admin username: admin
-Admin password: ********
+Admin password: zxcvbnm
 
 --- Admin Panel ---
 1) View all accounts
