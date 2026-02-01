@@ -227,6 +227,10 @@ This project is intentionally simple and portable; JSON keeps storage transparen
 **Is this safe for production?**
 No. It is a secure simulator for learning and testing patterns.
 
+## Future Implementation
+
+- Include an option to "block users" in the admin panel.
+
 ## Contributing
 
 Issues and PRs are welcome. Please include tests for new logic and run `ctest` before submission.
