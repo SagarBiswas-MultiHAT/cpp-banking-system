@@ -54,11 +54,11 @@ cmake --build build
 0) Exit
 
 > 2
-Name: Alice
-Father name: Bob
-National ID: 1234
-Phone: 555-111
-Email: alice@example.com
+Name: Sagar Biswas
+Father name: Shyamal Biswas
+National ID: 1122334455778899
+Phone: 0172731077
+Email: eng.sagar.aiub@example.com
 Set password: ********
 Initial deposit: 100
 
