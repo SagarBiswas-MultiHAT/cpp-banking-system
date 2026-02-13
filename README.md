@@ -1,5 +1,21 @@
 # C++ Banking System (Secure, Tested)
 
+<div align="right">
+
+![CI](https://github.com/SagarBiswas-MultiHAT/cpp-banking-system/actions/workflows/cmake.yml/badge.svg) 
+&nbsp;
+![C++17](https://img.shields.io/badge/c%2B%2B-17-blue) 
+&nbsp;
+![Build](https://img.shields.io/github/actions/workflow/status/SagarBiswas-MultiHAT/cpp-banking-system/cmake.yml?label=cmake) 
+&nbsp;
+![Tests](https://img.shields.io/badge/tests-ctest-brightgreen) 
+&nbsp;
+![License](https://img.shields.io/badge/license-MIT-green) 
+&nbsp;
+![Last commit](https://img.shields.io/github/last-commit/SagarBiswas-MultiHAT/cpp-banking-system)
+
+</div>
+
 Modern CLI banking simulator with secure credential handling, JSON-based storage, and automated tests/CI. It demonstrates production-grade practices (sanitizers, linting, atomic writes, and audited transactions) in a compact codebase.
 
 ## What this project is (and isn’t)
